@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: sqrbot-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: sqrbot
+    spec:
+      containers:
+
+        - name: sqrbot
+          imagePullPolicy: "Always"
+          image: "lsstsqre/sqrbot"
+          
+          env:
+            - name: HUBOT_SLACK_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: sqrbot-secrets
+                  key: slack-token
