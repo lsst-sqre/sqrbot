@@ -3,7 +3,7 @@
 Sqrbot is Hubot with a few custom scripts, which you will find in
 "scripts".  It's designed to talk to the LSSTC Slack and provide
 automation services.  For instance, try "@sqrbot status" in the
-#dm-square-status channel.
+&#35;dm-square-status channel.
 
 Don't get attached to Hubot; that's an implementation detail and we may
 replace it with something we like more.  Hubot is an easy starting
