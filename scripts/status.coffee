@@ -1,7 +1,7 @@
 # Commands:
 #   hubot status - Fetch status of various LSST services
 module.exports = (robot) ->
-  robot.hear /status/i, (res) ->
+  robot.respond /status/i, (res) ->
     https = require 'https'
     opts =
       host: 'status.lsst.codes',
