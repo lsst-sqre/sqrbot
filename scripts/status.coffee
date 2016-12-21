@@ -1,13 +1,9 @@
 # Commands:
 #   hubot status - Fetch status of various LSST services
-# Local variables:
-# coffee-tab-width: 4
-# End
 module.exports = (robot) ->
-  require('ssl-root-cas').inject()
   rootCas = require('ssl-root-cas/latest').create();
   require('https').globalAgent.options.ca = rootCas;
-  robot.respond /newstatus/i, (msg) ->
+  robot.respond /status/i, (msg) ->
     robot.http("https://api.lsst.codes/status/").get() (err, res, body) ->
       if err
         msg.send "Error: #{err}"
