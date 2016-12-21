@@ -21,3 +21,19 @@ spec:
                 secretKeyRef:
                   name: sqrbot-secrets
                   key: slack-token
+            - name: HUBOT_GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: sqrbot-secrets
+                  key: github-token
+            - name: HUBOT_GITHUB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sqrbot-secrets
+                  key: github-password
+            - name: HUBOT_GITHUB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: sqrbot-secrets
+                  key: github-user
+              
