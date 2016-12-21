@@ -4,8 +4,8 @@ module.exports = (robot) ->
   robot.respond /status/i, (res) ->
     https = require 'https'
     opts =
-      host: 'api.lsst.codes',
-      path: '/status/'
+      host: 'status.lsst.codes',
+      path: '/status.json'
     req = https.get opts, (hres) ->
       c = ""
       hres.on 'data', (chk) ->
