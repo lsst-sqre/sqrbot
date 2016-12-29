@@ -1,5 +1,5 @@
 # Commands:
-#   hubot status - Fetch status of named CI build
+#   hubot buildstatus <job> - Fetch status of CI build job <job>
 module.exports = (robot) ->
   rootCas = require('ssl-root-cas/latest').create();
   require('https').globalAgent.options.ca = rootCas;
