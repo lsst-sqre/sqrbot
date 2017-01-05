@@ -1,6 +1,8 @@
 FROM node
 MAINTAINER sqre-admin
-LABEL version="0.3.2" description="LSST DM-SQuaRE Hubot Automation"
+LABEL version="0.3.4" \
+      description="LSST DM-SQuaRE Hubot Automation" \
+      name="lsstsqre/sqrbot"
 RUN useradd -d /home/hubot -m hubot
 COPY external-scripts.json package.json README.md /home/hubot/
 COPY bin /home/hubot/bin/
