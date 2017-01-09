@@ -1,10 +1,10 @@
 # Commands:
-#   hubot ltdstatus - Report whether all published product endpoints are available
-#   hubot ltdstatus verbose - Report whether all published product endpoints are available, verbosely
-#   hubot ltdstatus <product> - Report whether published product endpoints for <product> are available
-#   hubot ltdstatus <product> verbose - Report whether published product endpoints for <product> are available, verbosely 
-#   hubot ltdstatus:monitor <interval> - Set up a poll for published product endpoints to run every <interval> seconds
-#   hubot ltdstatus:unmonitor - Cancel monitoring poll
+#   hubot ltdstatus - Report whether all published LSST The Docs product endpoints are available
+#   hubot ltdstatus verbose - Report whether all published LSST The Docs product endpoints are available, verbosely
+#   hubot ltdstatus <product> - Report whether published LSST The Docs product endpoints for <product> are available
+#   hubot ltdstatus <product> verbose - Report whether published LSST The Docs product endpoints for <product> are available, verbosely
+#   hubot ltdstatus:monitor <interval> - Set up a poll for published LSST The Docs product endpoints to run every <interval> seconds
+#   hubot ltdstatus:unmonitor - Cancel monitoring poll for LSST The Docs product endpoints
 
 timerid = null # static across messages
 
@@ -57,7 +57,7 @@ module.exports = (robot) ->
 
 
 getltdstatus = (robot,msg,product,verbose,interactive) ->
-  urlstr="https://api.lsst.codes/productstatus/"
+  urlstr="https://api.lsst.codes/ltdstatus/"
   if product
     urlstr += "#{product}"
   console.log("Getting URL #{urlstr}")
@@ -92,7 +92,12 @@ getltdstatus = (robot,msg,product,verbose,interactive) ->
           sc = verobj.status_code
           if verbose or sc < 200 or sc > 299
             url = verobj.url
-            thisedstr = "`#{vers}`: #{url}"
+            ispub = verobj.is_published_url
+            if ispub
+              thingstr = ":book:"
+            else
+              thingstr = ":warning:"
+            thisedstr = " `#{vers}`: #{url}"
             if sc < 200 or sc > 299
               aww = ":broken_heart: (`#{sc}`)"
               edstr += "#{aww}"
@@ -100,7 +105,7 @@ getltdstatus = (robot,msg,product,verbose,interactive) ->
                 masterstr += " #{aww}"
             else
               yay = ":white_check_mark:"
-              edstr += "#{yay}"
+              edstr += "#{thingstr}#{yay}"
               console.log("url: #{url} / produrl: #{produrl}")
               if "#{url}" is "#{produrl}" or "#{url}" is "#{produrl}/"
                 masterstr += " " + yay
