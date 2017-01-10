@@ -92,21 +92,22 @@ getltdstatus = (robot,msg,product,verbose,interactive) ->
           sc = verobj.status_code
           if verbose or sc < 200 or sc > 299
             url = verobj.url
-            ispub = verobj.is_published_url
-            if ispub
+            urltype = verobj.url_type
+            if "#{urltype}" is "product"
+              thingstr = ":no_entry:`[ PRODUCT #{product} DOES NOT EXIST ]`\n"
+            else if "#{urltype}" is "product_edition_published_url"
               thingstr = ":book:"
             else
               thingstr = ":warning:"
             thisedstr = " `#{vers}`: #{url}"
             if sc < 200 or sc > 299
               aww = ":broken_heart: (`#{sc}`)"
-              edstr += "#{aww}"
+              edstr += "#{thingstr}#{aww}"
               if "#{url}" is "#{produrl}" or "#{url}" is "#{produrl}/"
                 masterstr += " #{aww}"
             else
               yay = ":white_check_mark:"
               edstr += "#{thingstr}#{yay}"
-              console.log("url: #{url} / produrl: #{produrl}")
               if "#{url}" is "#{produrl}" or "#{url}" is "#{produrl}/"
                 masterstr += " " + yay
             edstr += " #{thisedstr}\n"

@@ -15,5 +15,5 @@ WORKDIR /home/hubot
 # You will need to set HUBOT_SLACK_TOKEN in order for this to work.
 #
 CMD bin/hubot -a slack
-ARG VERSION="0.4.0"
+ARG VERSION="0.4.1"
 LABEL version="$VERSION"
