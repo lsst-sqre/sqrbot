@@ -1,10 +1,10 @@
 # coffeelint: disable=max_line_length
 # Commands:
-#   hubot newproject list - Describe kinds of projects that can be set up
-#   hubot newproject describe <project-type> - show cookiecutter.json for project-type
-#   hubot newproject aliases - Show friendlier names for project types
-#   hubot newproject create [ technote | lsst-technote-bootstrap ] title="<title>" description="<description>" series="<series>" [ field1="<value>"... ] (see `hubot newproject describe technote` for other fields) - Create a new technote
-#   hubot newproject create [ microservice | uservice-bootstrap ] svc_name="<service name>" description="<description>" [ field1="<value>"... ] (see `hubot newproject describe microservice` for other fields) - Create a new microservice
+#   hubot project list - Describe kinds of projects that can be set up
+#   hubot project describe <project-type> - show cookiecutter.json for project-type
+#   hubot project aliases - Show friendlier names for project types
+#   hubot project create [ technote | lsst-technote-bootstrap ] title="<title>" description="<description>" series="<series>" [ field1="<value>"... ] (see `hubot project describe technote` for other fields) - Create a new technote
+#   hubot project create [ microservice | uservice-bootstrap ] svc_name="<service name>" description="<description>" [ field1="<value>"... ] (see `hubot project describe microservice` for other fields) - Create a new microservice
 # coffeelint: enable=max_line_length
 
 module.exports = (robot) ->
@@ -37,13 +37,13 @@ module.exports = (robot) ->
   
   rootCas = require('ssl-root-cas/latest').create()
   require('https').globalAgent.options.ca = rootCas
-  robot.respond /newproject\s+list$/i, (msg) ->
+  robot.respond /project\s+list$/i, (msg) ->
     repstr = "I know about the following project types:\n"
     for type of typecache
       repstr += "  `#{type}`\n"
     msg.send "#{repstr}"
     return
-  robot.respond /newproject\s+describe\s+(\S+)$/i, (msg) ->
+  robot.respond /project\s+describe\s+(\S+)$/i, (msg) ->
     ptype = msg.match[1]
     ntype = resolvetype(ptype)
     if ntype is null
@@ -51,20 +51,20 @@ module.exports = (robot) ->
       return
     msg.send "```" + JSON.stringify((typecache[ntype]),null,2) + "```"
     return
-  robot.respond /newproject\s+aliases$/i, (msg) ->
+  robot.respond /project\s+aliases$/i, (msg) ->
     repstr = "You can use the following aliases:\n"
     for type of typealias
       repstr += "  `#{type} : #{typealias[type]}`\n"
     msg.send "#{repstr}"
     return
-  robot.respond /newproject\s+create\s+(\S+)$/i, (msg) ->
+  robot.respond /project\s+create\s+(\S+)$/i, (msg) ->
     ptype = msg.match[1]
     if resolvetype(ptype) is null
       msg.send "Unknown project type '#{ptype}'."
       return
     msg.send "Create '#{ptype}' requires arguments."
     return
-  robot.respond /newproject\s+create\s+(\S+)\s+(.*)$/i, (msg) ->
+  robot.respond /project\s+create\s+(\S+)\s+(.*)$/i, (msg) ->
     ptype = msg.match[1]
     pargs = msg.match[2]
     ntype = resolvetype(ptype)
@@ -79,7 +79,7 @@ module.exports = (robot) ->
       return ptype
     for cname of typealias
       if ptype in typealias[cname]
-          return cname
+        return cname
     return null
 
   dispatch = (robot, msg, ntype, pargs) ->
@@ -157,6 +157,8 @@ module.exports = (robot) ->
     if argdict.series?
       argdict.series = argdict.series.toUpperCase()
     delete argdict.hubot_name
+    # Not used by cookiecutter, but used by git to set author info.
+    argdict.github_email = argdict.hubot_email
     delete argdict.hubot_email
     # Copy template to returned data
     rdata = {}
