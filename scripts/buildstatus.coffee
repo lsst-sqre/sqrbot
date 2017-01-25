@@ -1,8 +1,8 @@
 # Commands:
-#   hubot buildstatus <job> - Fetch status of CI build job <job>
+#   `@sqrbot buildstatus <job>` - Fetch status of CI build job _job_
 module.exports = (robot) ->
-  rootCas = require('ssl-root-cas/latest').create();
-  require('https').globalAgent.options.ca = rootCas;
+  rootCas = require('ssl-root-cas/latest').create()
+  require('https').globalAgent.options.ca = rootCas
   robot.respond /buildstatus (\S+)/i, (msg) ->
     jerb = msg.match[1]
     headers = make_auth_headers()
@@ -10,7 +10,7 @@ module.exports = (robot) ->
     .headers(headers)
     .get() (err, res, body) ->
       if err
-        msg.send "Error: #{err}"
+        msg.reply "Error: #{err}"
         return
       try
         content = JSON.parse(body)
@@ -30,10 +30,10 @@ module.exports = (robot) ->
           when "grey" then colorstr=":grey_exclamation:"
           else colorstr=":grey_question:"
         retstr = "#{colorstr} [ Job #{jerb} ] #{desc} (Score = #{score})"
-        msg.send retstr
+        msg.reply retstr
       catch error
-        msg.send "Could not get status for job #{jerb} -- check the name."
-        msg.send "Error was: #{error}"
+        msg.reply "Could not get status for job #{jerb} -- check the name."
+        msg.reply "Error was: #{error}"
 
 make_auth_headers = ->
   user = process.env["HUBOT_GITHUB_USER"]

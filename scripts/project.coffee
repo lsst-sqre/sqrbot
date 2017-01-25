@@ -1,10 +1,11 @@
 # coffeelint: disable=max_line_length
 # Commands:
-#   hubot project list - Describe kinds of projects that can be set up
-#   hubot project describe <project-type> - show cookiecutter.json for project-type
-#   hubot project aliases - Show friendlier names for project types
-#   hubot project create [ technote | lsst-technote-bootstrap ] title="<title>" description="<description>" series="<series>" [ field1="<value>"... ] (see `hubot project describe technote` for other fields) - Create a new technote
-#   hubot project create [ microservice | uservice-bootstrap ] svc_name="<service name>" description="<description>" [ field1="<value>"... ] (see `hubot project describe microservice` for other fields) - Create a new microservice
+#   `@sqrbot project list` - Describe kinds of projects that can be set up
+#   `@sqrbot project describe <project-type>` - show cookiecutter.json for project-type
+#   `@sqrbot project aliases` - Show friendlier names for project types
+#   `@sqrbot project create [ technote | lsst-technote-bootstrap ] title="<title>" description="<description>" series="<series>" [ field1="<value>"... ]` (see `@sqrbot project describe technote` for other fields) - Create a new technote
+#   `@sqrbot project create [ microservice | uservice-bootstrap ] svc_name="<service name>" description="<description>" [ field1="<value>"... ]` (see `@sqrbot project describe microservice` for other fields) - Create a new microservice
+
 # coffeelint: enable=max_line_length
 
 module.exports = (robot) ->
@@ -40,36 +41,39 @@ module.exports = (robot) ->
   robot.respond /project\s+list$/i, (msg) ->
     repstr = "I know about the following project types:\n"
     for type of typecache
-      repstr += "  `#{type}`\n"
-    msg.send "#{repstr}"
+      repstr += "  `#{type}`"
+      if type of typealias
+        repstr += ": `#{typealias[type]}`"
+      repstr += "\n"
+    msg.reply "#{repstr}"
     return
   robot.respond /project\s+describe\s+(\S+)$/i, (msg) ->
     ptype = msg.match[1]
     ntype = resolvetype(ptype)
     if ntype is null
-      msg.send "I don't know about project type `#{ptype}`"
+      msg.reply "I don't know about project type `#{ptype}`"
       return
-    msg.send "```" + JSON.stringify((typecache[ntype]),null,2) + "```"
+    msg.reply "```" + JSON.stringify((typecache[ntype]),null,2) + "```"
     return
   robot.respond /project\s+aliases$/i, (msg) ->
     repstr = "You can use the following aliases:\n"
     for type of typealias
       repstr += "  `#{type} : #{typealias[type]}`\n"
-    msg.send "#{repstr}"
+    msg.reply "#{repstr}"
     return
   robot.respond /project\s+create\s+(\S+)$/i, (msg) ->
     ptype = msg.match[1]
     if resolvetype(ptype) is null
-      msg.send "Unknown project type '#{ptype}'."
+      msg.reply "Unknown project type '#{ptype}'."
       return
-    msg.send "Create '#{ptype}' requires arguments."
+    msg.reply "Create '#{ptype}' requires arguments."
     return
   robot.respond /project\s+create\s+(\S+)\s+(.*)$/i, (msg) ->
     ptype = msg.match[1]
     pargs = msg.match[2]
     ntype = resolvetype(ptype)
     if ntype is null
-      msg.send "Unknown project type '#{ptype}'."
+      msg.reply "Unknown project type '#{ptype}'."
       return
     dispatch(robot, msg, ntype,pargs)
     return
@@ -85,7 +89,7 @@ module.exports = (robot) ->
   dispatch = (robot, msg, ntype, pargs) ->
     argdict = parse_args(pargs)
     if not argdict?
-      msg.send "I couldn't parse `#{pargs}` into something sensible."
+      msg.reply "I couldn't parse `#{pargs}` into something sensible."
       return
     # Add things we know from the message
     argdict.hubot_name = msg.message.user.profile.real_name
@@ -93,33 +97,33 @@ module.exports = (robot) ->
     template = typecache[ntype]
     svc_obj = create_request_obj(argdict, template, ntype)
     if not svc_obj.ok
-      msg.send "Cannot create '#{ntype}': #{svc_obj.reason}."
+      msg.reply "Cannot create '#{ntype}': #{svc_obj.reason}."
       return
     # Now we've got the thing we're going to send.
     url = "#{svc}/#{ntype}/"
     headers = make_headers()
     data = JSON.stringify(svc_obj.data,null,2)
-    msg.send "Sending request to the API..."
+    msg.reply "Sending request to the API..."
     robot.http(url).headers(headers).post(data) (err, res, body) ->
       if err
-        msg.send "API request to #{url} got error: #{err}"
+        msg.reply "API request to #{url} got error: #{err}"
         return
       received = null
       sc = res.statusCode
       sr = res.statusMessage
       if sc < 200 or sc > 299
-        msg.send "API request to #{url} failed: #{sc} #{sr}:\n```#{body}```"
+        msg.reply "API request to #{url} failed: #{sc} #{sr}:\n```#{body}```"
         return
       try
         received = JSON.parse(body)
       catch
-        msg.send "Failed to JSON-decode message: ```#{body}```"
+        msg.reply "Failed to JSON-decode message: ```#{body}```"
         return
       if "repo_url" not of received
-        msg.send "Did not receive `repo_url` in: ```" + \
+        msg.reply "Did not receive `repo_url` in: ```" + \
           JSON.stringify(received, null, 2) + "```"
         return
-      msg.send "Your new `#{typealias[ntype][0]}` is at: " + \
+      msg.reply "Your new `#{typealias[ntype][0]}` is at: " + \
         received.repo_url + " ."
     return
 

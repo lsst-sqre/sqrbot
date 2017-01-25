@@ -1,17 +1,19 @@
+# coffeelint: disable=max_line_length
 # Commands:
-#   hubot ltdstatus - Report whether all published LSST The Docs product endpoints are available
-#   hubot ltdstatus verbose - Report whether all published LSST The Docs product endpoints are available, verbosely
-#   hubot ltdstatus <product> - Report whether published LSST The Docs product endpoints for <product> are available
-#   hubot ltdstatus <product> verbose - Report whether published LSST The Docs product endpoints for <product> are available, verbosely
-#   hubot ltdstatus:monitor <interval> - Set up a poll for published LSST The Docs product endpoints to run every <interval> seconds
-#   hubot ltdstatus:unmonitor - Cancel monitoring poll for LSST The Docs product endpoints
+#   `@sqrbot ltdstatus` - Report whether all published LSST The Docs product endpoints are available
+#   `@sqrbot ltdstatus verbose` - Report whether all published LSST The Docs product endpoints are available, verbosely
+#   `@sqrbot ltdstatus <product>` - Report whether published LSST The Docs product endpoints for _product_ are available
+#   `@sqrbot ltdstatus <product> verbose` - Report whether published LSST The Docs product endpoints for _product_ are available, verbosely
+#   `@sqrbot ltdstatus:monitor <interval>` - Set up a poll for published LSST The Docs product endpoints to run every _interval_ seconds
+#   `@sqrbot ltdstatus:unmonitor` - Cancel monitoring poll for LSST The Docs product endpoints
 
+# coffeelint: enable=max_line_length
 timerid = null # static across messages
 
 
 module.exports = (robot) ->
-  rootCas = require('ssl-root-cas/latest').create();
-  require('https').globalAgent.options.ca = rootCas;
+  rootCas = require('ssl-root-cas/latest').create()
+  require('https').globalAgent.options.ca = rootCas
   robot.respond /ltdstatus$/i, (msg) ->
     getltdstatus(robot,msg,null,false,true)
     return
@@ -25,7 +27,7 @@ module.exports = (robot) ->
     getltdstatus(robot,msg,product,false,true)
     return
   robot.respond /ltdstatus (\S+)\s+verbose$/i, (msg) ->
-    product=msg.match[1]    
+    product=msg.match[1]
     getltdstatus(robot,msg,product,true,true)
     return
   robot.respond /ltdstatus:monitor (\S+)$/i, (msg) ->
@@ -35,24 +37,24 @@ module.exports = (robot) ->
       if isNaN(secs)
         arghstr = "Could not understand putative number #{intervalstr}. "
         arghstr += "Using default of 8 hours instead."
-        msg.send "#{arghstr}"
+        msg.reply "#{arghstr}"
         interval = 1000 * 60 * 60 * 8
       interval = secs * 1000
       loopproducts(robot,msg)
       timerid = setInterval ->
         loopproducts(robot,msg)
       , interval
-      msg.send "Product endpoint monitoring enabled: poll #{secs} s."
+      msg.reply "Product endpoint monitoring enabled: poll #{secs} s."
     else
-      msg.send "Product endpoint monitoring already enabled."
+      msg.reply "Product endpoint monitoring already enabled."
     return
   robot.respond /ltdstatus:unmonitor/i, (msg) ->
     if timerid
       clearInterval(timerid)
-      msg.send "Product endpoint monitoring disabled."
+      msg.reply "Product endpoint monitoring disabled."
       timerid = null
     else
-      msg.send "Product endpoint monitoring already disabled."
+      msg.reply "Product endpoint monitoring already disabled."
     return
 
 
@@ -63,7 +65,7 @@ getltdstatus = (robot,msg,product,verbose,interactive) ->
   console.log("Getting URL #{urlstr}")
   robot.http(urlstr).get() (err, res, body) ->
     if err
-      msg.send "Error: `#{err}`"
+      msg.reply "Error: `#{err}`"
       return
     sc = res.statusCode
     if sc > 199 and sc < 300 and not verbose
@@ -74,8 +76,8 @@ getltdstatus = (robot,msg,product,verbose,interactive) ->
         mstr = "Product #{product}" + mstr
       else
         mstr = "All" + mstr
-      msg.send mstr
-      return 
+      msg.reply mstr
+      return
     mstr = ""
     try
       content = JSON.parse(body)
@@ -113,11 +115,11 @@ getltdstatus = (robot,msg,product,verbose,interactive) ->
             edstr += " #{thisedstr}\n"
         mstr += "#{masterstr}\n#{edstr}"
       console.log("Response:\n@@@@\n#{mstr}\n@@@@")
-      msg.send "#{mstr}"
+      msg.reply "#{mstr}"
     catch error
-      msg.send "Could not get product status."
-      msg.send "Error was: `#{error}`"
-      msg.send "Body of response was: `#{body}`"
+      msg.reply "Could not get product status."
+      msg.reply "Error was: `#{error}`"
+      msg.reply "Body of response was:\n```#{body}```"
 
 
 loopproducts = (robot,msg) ->

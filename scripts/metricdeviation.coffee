@@ -1,14 +1,16 @@
+# coffeelint: disable=max_line_length
 # Commands:
-#   hubot metricdeviation <metric> <threshold> - Report whether metric <metric> (legal values are AM1, AM2, PA1) has changed  more than <threshold>% since last run
-#   hubot metricdeviation:monitor <interval> <threshold> - Set up a poll for metrics (AM1, AM2, PA1) every <interval> seconds to check for changes of more than <threshold>% since last run
-#   hubot metricdeviation:unmonitor - Cancel monitoring poll
+#   `@sqrbot metricdeviation <metric> <threshold>` - Report whether metric _metric_ (legal values are AM1, AM2, PA1) has changed  more than _threshold_% since last run
+#   `@sqrbot metricdeviation:monitor <interval> <threshold>` - Set up a poll for metrics (AM1, AM2, PA1) every _interval_ seconds to check for changes of more than _threshold_% since last run
+#   `@sqrbot metricdeviation:unmonitor` - Cancel monitoring poll
 
+# coffeelint: enable=max_line_length
 timerid = null # static across messages
 
 
 module.exports = (robot) ->
-  rootCas = require('ssl-root-cas/latest').create();
-  require('https').globalAgent.options.ca = rootCas;
+  rootCas = require('ssl-root-cas/latest').create()
+  require('https').globalAgent.options.ca = rootCas
   robot.respond /metricdeviation (\S+)\s+(\S+)$/i, (msg) ->
     metric = msg.match[1]
     threshold = msg.match[2]
@@ -23,23 +25,23 @@ module.exports = (robot) ->
       if isNaN(interval)
         arghstr = "Could not understand putative number #{intervalstr}. "
         arghstr += "Using default of 8 hours instead."
-        msg.send "#{arghstr}"
+        msg.reply "#{arghstr}"
         interval = 1000 * 60 * 60 * 8
       threshold = msg.match[2]
       loopmetrics(robot,msg,threshold)
       timerid = setInterval ->
         loopmetrics(robot,msg,threshold)
       , interval
-      msg.send "Metric deviation monitoring enabled."
+      msg.reply "Metric deviation monitoring enabled."
     else
-      msg.send "Metric deviation monitoring already enabled."
+      msg.reply "Metric deviation monitoring already enabled."
   robot.respond /metricdeviation:unmonitor/i, (msg) ->
     if timerid
       clearInterval(timerid)
-      msg.send "Metric deviation monitoring disabled."
+      msg.reply "Metric deviation monitoring disabled."
       timerid = null
     else
-      msg.send "Metric deviation monitoring already disabled."
+      msg.reply "Metric deviation monitoring already disabled."
 
 
 getmetric = (robot,msg,metric,threshold,interactive) ->
@@ -48,7 +50,7 @@ getmetric = (robot,msg,metric,threshold,interactive) ->
   .headers(headers)
   .get() (err, res, body) ->
     if err
-      msg.send "Error: `#{err}`"
+      msg.reply "Error: `#{err}`"
       return
     try
       content = JSON.parse(body)
@@ -72,16 +74,16 @@ getmetric = (robot,msg,metric,threshold,interactive) ->
           changelist = content.changed_packages.toString()
           retstr += "\n`#{count}` packages changed: `#{changelist}`."
         console.log(retstr)
-        msg.send "#{retstr}"
+        msg.reply "#{retstr}"
       else
         if interactive
           retstr = "Metric `#{metric}` did not change more than `#{threshold}%`"
           retstr += " in the last run."
-          msg.send "#{retstr}"
+          msg.reply "#{retstr}"
     catch error
-      msg.send "Could not get metric `#{metric}` for `#{threshold}%` change."
-      msg.send "Error was: `#{error}`"
-      msg.send "Body of response was: `#{body}`"
+      msg.reply "Could not get metric `#{metric}` for `#{threshold}%` change."
+      msg.reply "Error was: `#{error}`"
+      msg.reply "Body of response was: `#{body}`"
 
 
 loopmetrics = (robot,msg,threshold) ->

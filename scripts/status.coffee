@@ -1,12 +1,12 @@
 # Commands:
-#   hubot status - Fetch status of various LSST services
+#   `@sqrbot status` - Fetch status of various LSST services
 module.exports = (robot) ->
-  rootCas = require('ssl-root-cas/latest').create();
-  require('https').globalAgent.options.ca = rootCas;
+  rootCas = require('ssl-root-cas/latest').create()
+  require('https').globalAgent.options.ca = rootCas
   robot.respond /status/i, (msg) ->
     robot.http("https://api.lsst.codes/status/").get() (err, res, body) ->
       if err
-        msg.send "Error: #{err}"
+        msg.reply "Error: #{err}"
         return
       content = JSON.parse(body)
       retstr = "*HOSTS*\n"
@@ -25,9 +25,9 @@ module.exports = (robot) ->
             retstr += ":white_check_mark:"
           else if v2 is "WARNING"
             retstr += ":large_orange_diamond:"
-          else if v2 is "CRITICAL"  
+          else if v2 is "CRITICAL"
             retstr += ":red_circle:"
           else
             retstr += ":question:"
           retstr += " `" + k + "/" + k2 + "`" + "\n"
-      msg.send retstr
+      msg.reply retstr
