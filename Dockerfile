@@ -14,6 +14,11 @@ WORKDIR /home/hubot
 #
 # You will need to set HUBOT_SLACK_TOKEN in order for this to work.
 #
+# For the scripts to all work you will want:
+# HUBOT_GITHUB_USER
+# HUBOT_GITHUB_TOKEN
+# HUBOT_GITHUB_PASSWORD
+#
 CMD bin/hubot -a slack
-ARG VERSION="0.4.1"
+ARG VERSION="0.4.2"
 LABEL version="$VERSION"
