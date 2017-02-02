@@ -123,8 +123,12 @@ module.exports = (robot) ->
         msg.reply "Did not receive `repo_url` in: ```" + \
           JSON.stringify(received, null, 2) + "```"
         return
-      msg.reply "Your new `#{typealias[ntype][0]}` is at: " + \
+      repstr = "Your new `#{typealias[ntype][0]}` is at: " + \
         received.repo_url + " ."
+      if received.post_commit_error?
+        repstr += "\nHowever, there were problems after repository creation:\n"
+        repstr += "#{received.post_commit_error}"
+      msg.reply "#{repstr}"
     return
 
   create_request_obj = (argdict, template, ntype) ->
