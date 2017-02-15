@@ -3,8 +3,8 @@
 #   `@sqrbot project list` - Describe kinds of projects that can be set up
 #   `@sqrbot project describe <project-type>` - show cookiecutter.json for project-type
 #   `@sqrbot project aliases` - Show friendlier names for project types
-#   `@sqrbot project create [ technote | lsst-technote-bootstrap ] title="<title>" description="<description>" series="<series>" [ field1="<value>"... ]` (see `@sqrbot project describe technote` for other fields) - Create a new technote
-#   `@sqrbot project create [ microservice | uservice-bootstrap ] svc_name="<service name>" description="<description>" [ field1="<value>"... ]` (see `@sqrbot project describe microservice` for other fields) - Create a new microservice
+#   `@sqrbot project create [ technote | lsst-technote-bootstrap ] title={{<title>}} description={{<description>}} series={{<series>}} [ field1={{<value>}}... ]` (see `@sqrbot project describe technote` for other fields) - Create a new technote
+#   `@sqrbot project create [ microservice | uservice-bootstrap ] svc_name={{<service name>}} description={{<description>}} [ field1={{<value>}}... ]` (see `@sqrbot project describe microservice` for other fields) - Create a new microservice
 
 # coffeelint: enable=max_line_length
 
@@ -243,14 +243,14 @@ module.exports = (robot) ->
     \s*          # optional whitespace
     =            # equals sign
     \s*          # optional whitespace
-    ([\"|\'])    # single or double-quote (capture)
+    \{\{         # double open curly bracket
     (.*?)        # capture value; zero or more of anything, non-greedy
-    \2           # close-quote
+    \}\}         # double close curly bracket
     (.*)         # rest of input
     ///
     try
       while pargs != ""
-        [ token, q, value, rest ] = pargs.match(parsepattern)[1..4]
+        [ token, value, rest ] = pargs.match(parsepattern)[1..3]
         r[token] = value
         pargs = rest
     catch
