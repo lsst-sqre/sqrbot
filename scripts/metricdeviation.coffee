@@ -59,7 +59,8 @@ getmetric = (robot,msg,metric,threshold,interactive) ->
         previous = content.previous
         delta_pct = content.delta_pct
         units = content.units
-        url = content.url
+        if content.url?
+          url=content.url
         if units != ""
           current = "#{current} #{units}"
           previous = "#{previous} #{units}"
@@ -68,7 +69,8 @@ getmetric = (robot,msg,metric,threshold,interactive) ->
         retstr += "\nCurrent value: `#{current}` / "
         retstr += "Previous value: `#{previous}`."
         retstr += "\nChange was `#{delta_pct}%`."
-        retstr += "\nDashboard: #{url} ."
+        #if url?
+        #  retstr += "\nDashboard: #{url} ."
         if content.changecount > 0
           count = content.changecount
           changelist = content.changed_packages.toString()
