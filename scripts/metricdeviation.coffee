@@ -1,7 +1,8 @@
 # coffeelint: disable=max_line_length
 # Commands:
-#   `@sqrbot metricdeviation <metric> <threshold>` - Report whether metric _metric_ (legal values are AM1, AM2, PA1) has changed  more than _threshold_% since last run
-#   `@sqrbot metricdeviation:monitor <interval> <threshold>` - Set up a poll for metrics (AM1, AM2, PA1) every _interval_ seconds to check for changes of more than _threshold_% since last run
+#   `@sqrbot metricdeviation describemetrics` - Get all metric names and descriptions
+#   `@sqrbot metricdeviation <metric> <threshold>` - Report whether metric _metric_ has changed  more than _threshold_% since last run
+#   `@sqrbot metricdeviation:monitor <interval> <threshold>` - Set up a poll for all metrics every _interval_ seconds to check for changes of more than _threshold_% since last run
 #   `@sqrbot metricdeviation:unmonitor` - Cancel monitoring poll
 
 # coffeelint: enable=max_line_length
@@ -11,6 +12,12 @@ timerid = null # static across messages
 module.exports = (robot) ->
   rootCas = require('ssl-root-cas/latest').create()
   require('https').globalAgent.options.ca = rootCas
+  robot.respond /metricdeviation\s+describemetrics$/i, (msg) ->
+    metrics=descmetric()
+    rstr=""
+    for k, v of metrics
+      rstr += "#{k}: #{v}\n"
+    msg.reply "#{rstr}"
   robot.respond /metricdeviation (\S+)\s+(\S+)$/i, (msg) ->
     metric = msg.match[1]
     threshold = msg.match[2]
@@ -43,6 +50,23 @@ module.exports = (robot) ->
     else
       msg.reply "Metric deviation monitoring already disabled."
 
+descmetric = (robot, msg) ->
+  headers = make_auth_headers()
+  retval = robot.http("https://api.lsst.codes/metricdeviation/describemetrics")
+  .headers(headers)
+  .get() (err, res, body) ->
+    content = null
+    if err
+      msg.reply "Error: `#{err}`"
+      return content
+    try
+      content = JSON.parse(body)
+    catch error
+      msg.reply "Could not describe metrics."
+      msg.reply "Error was: `#{error}`"
+      msg.reply "Body of response was: `#{body}`"
+    return content
+  return retval
 
 getmetric = (robot,msg,metric,threshold,interactive) ->
   headers = make_auth_headers()
@@ -59,8 +83,7 @@ getmetric = (robot,msg,metric,threshold,interactive) ->
         previous = content.previous
         delta_pct = content.delta_pct
         units = content.units
-        if content.url?
-          url=content.url
+        url = content.graph
         if units != ""
           current = "#{current} #{units}"
           previous = "#{previous} #{units}"
@@ -89,7 +112,7 @@ getmetric = (robot,msg,metric,threshold,interactive) ->
 
 
 loopmetrics = (robot,msg,threshold) ->
-  metrics = [ "AM1", "AM2", "PA1" ]
+  metrics = ( k for k,v of descmetric() )
   for metric in metrics
     getmetric(robot,msg,metric,threshold,false)
 
