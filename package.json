@@ -1,6 +1,6 @@
 {
   "name": "sqrbot",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "private": true,
   "author": "Adam Thornton <athornton@lsst.org>",
   "description": "DM-SQuaRE Automation",
