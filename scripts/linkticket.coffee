@@ -35,7 +35,10 @@ getAttachment = (issue) ->
   issue_md = "<https://jira.lsstcorp.org/browse/#{issue.key}|#{issue.key}>"
   status_md = "`#{issue.fields.status.name}`"
   response.text = issue_md + ": " + status_md + " " + issue.fields.summary
-  response.footer = issue.fields.assignee.displayName
-  response.footer_icon = issue.fields.priority.iconUrl
+  response.footer = 'Unassigned'
+  if issue.fields.assignee
+    response.footer = issue.fields.assignee.displayName
+  if "priority" in issue.fields
+    response.footer_icon = issue.fields.priority.iconUrl
   response.ts = moment(issue.fields.created).format("X")
   return response
