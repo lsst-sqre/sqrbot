@@ -1,28 +1,30 @@
 # Commands:
 #   `DM-<ticketid>` - Return link to that Jira ticket.
 #   `RFC-<ticketid>` - Return link to *that* RFC.
+moment = require("moment")
+
 module.exports = (robot) ->
   rootCas = require('ssl-root-cas/latest').create()
   require('https').globalAgent.options.ca = rootCas
   ticketId = null
-  robot.hear /(DM|RFC)-\d+/g, (context) ->
+  robot.hear /(DM|RFC)-\d+/g, (msg) ->
     # Link to the associated tickets
-      summary = getJiraSummary(robot, context.match[1..])
-      msg.send(summary)
+    issueResponses(robot, msg)
 
-getJiraSummary = (robot,ticketIds) ->
-  attachments = []
+
+issueResponses = (robot, msg) ->
+  ticketIds = msg.match
   for ticketId in ticketIds
     urlstr="https://jira.lsstcorp.org/rest/api/latest/issue/#{ticketId}"
     robot.http(urlstr).get() (err, res, body) ->
       if err
-        return "(Error talking to Jira: `#{err}`)"
+        msg.send("(Error talking to Jira: `#{err}`)")
       try
         issue = JSON.parse(body)
-        attachments.push(getAttachment(issue))
+        attachment = getAttachment(issue)
+        msg.send({attachments: [attachment]})
       catch error
-        return "Error parsing JSON: `#{error}`"
-  attachments: attachments
+        msg.send("Error parsing JSON for #{ticketId}: `#{error}`")
 
 getAttachment = (issue) ->
   response = fallback: ''
@@ -35,5 +37,5 @@ getAttachment = (issue) ->
   response.text = issue_md + ": " + status_md + " " + issue.fields.summary
   response.footer = issue.fields.assignee.displayName
   response.footer_icon = issue.fields.status.iconUrl
-  response.ts = moment(issue.fields.created)
-  response
+  response.ts = moment(issue.fields.created).format("X")
+  return response
