@@ -7,7 +7,7 @@ module.exports = (robot) ->
   rootCas = require('ssl-root-cas/latest').create()
   require('https').globalAgent.options.ca = rootCas
   ticketId = null
-  robot.hear /(DM|RFC)-\d+/g, (msg) ->
+  robot.hear /(DM|RFC)-\d+/gi, (msg) ->
     # Link to the associated tickets
     issueResponses(robot, msg)
 
@@ -15,6 +15,7 @@ module.exports = (robot) ->
 issueResponses = (robot, msg) ->
   ticketIds = msg.match
   for ticketId in ticketIds
+    ticketId = ticketId.toUpperCase()
     urlstr="https://jira.lsstcorp.org/rest/api/latest/issue/#{ticketId}"
     robot.http(urlstr).get() (err, res, body) ->
       if err
