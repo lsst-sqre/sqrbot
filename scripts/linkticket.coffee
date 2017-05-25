@@ -36,6 +36,6 @@ getAttachment = (issue) ->
   status_md = "`#{issue.fields.status.name}`"
   response.text = issue_md + ": " + status_md + " " + issue.fields.summary
   response.footer = issue.fields.assignee.displayName
-  response.footer_icon = issue.fields.status.iconUrl
+  response.footer_icon = issue.fields.priority.iconUrl
   response.ts = moment(issue.fields.created).format("X")
   return response
