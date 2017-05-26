@@ -7,7 +7,7 @@ module.exports = (robot) ->
   rootCas = require('ssl-root-cas/latest').create()
   require('https').globalAgent.options.ca = rootCas
   ticketId = null
-  robot.hear /(DM|RFC)-\d+/gi, (msg) ->
+  robot.hear /(^|\s+)(DM|RFC)-\d+/gi, (msg) ->
     # Link to the associated tickets
     issueResponses(robot, msg)
 
