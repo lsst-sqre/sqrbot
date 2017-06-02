@@ -2,14 +2,30 @@
 #   `DM-<ticketid>` - Return link to that Jira ticket.
 #   `RFC-<ticketid>` - Return link to *that* RFC.
 moment = require("moment")
+{TextMessage} = require("hubot/src/message")
+
+BOT_NAMES = ["jirabot"]
 
 module.exports = (robot) ->
   rootCas = require('ssl-root-cas/latest').create()
   require('https').globalAgent.options.ca = rootCas
   ticketId = null
-  robot.hear /\b(DM|RFC|ITRFC|IHS|PUB)-\d+/gi, (msg) ->
-    # Link to the associated tickets
-    issueResponses(robot, msg)
+  robot.listen(
+    # Matcher
+    (message) ->
+      if message instanceof TextMessage
+        match = message.match(/\b(DM|RFC|ITRFC|IHS|PUB)-\d+/gi)
+        if match and message.user.name not in BOT_NAMES
+          match
+        else
+          false
+      else
+        false
+    # Callback
+    (response) ->
+      # Link to the associated tickets
+      issueResponses(robot, response)
+  )
 
 
 issueResponses = (robot, msg) ->
