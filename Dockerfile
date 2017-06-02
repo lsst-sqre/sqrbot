@@ -20,5 +20,5 @@ WORKDIR /home/hubot
 # HUBOT_GITHUB_PASSWORD
 #
 CMD bin/hubot -a slack
-ARG VERSION="0.5.3"
+ARG VERSION="0.5.4"
 LABEL version="$VERSION"
