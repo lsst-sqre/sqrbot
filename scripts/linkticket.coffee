@@ -29,7 +29,7 @@ module.exports = (robot) ->
 
 
 issueResponses = (robot, msg) ->
-  ticketIds = msg.match
+  ticketIds = Array.from(new Set(msg.match))
   for ticketId in ticketIds
     ticketId = ticketId.toUpperCase()
     urlstr="https://jira.lsstcorp.org/rest/api/latest/issue/#{ticketId}"
