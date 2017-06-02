@@ -32,6 +32,11 @@ issueResponses = (robot, msg) ->
   ticketIds = Array.from(new Set(msg.match))
   for ticketId in ticketIds
     ticketId = ticketId.toUpperCase()
+    last = robot.brain.get(ticketId)
+    now = moment()
+    robot.brain.set(ticketId, now)
+    if last and now.isBefore last.add(1, 'minute')
+      return
     urlstr="https://jira.lsstcorp.org/rest/api/latest/issue/#{ticketId}"
     robot.http(urlstr).get() (err, res, body) ->
       if res.statusCode in [401, 403]
