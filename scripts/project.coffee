@@ -103,7 +103,6 @@ module.exports = (robot) ->
     url = "#{svc}/#{ntype}/"
     headers = make_headers()
     data = JSON.stringify(svc_obj.data,null,2)
-    msg.reply "Sending request to the API..."
     robot.http(url).headers(headers).post(data) (err, res, body) ->
       if err
         msg.reply "API request to #{url} got error: #{err}"
@@ -119,16 +118,11 @@ module.exports = (robot) ->
       catch
         msg.reply "Failed to JSON-decode message: ```#{body}```"
         return
-      if "repo_url" not of received
-        msg.reply "Did not receive `repo_url` in: ```" + \
+      if "message" not of received
+        msg.reply "Did not receive `message` in: ```" + \
           JSON.stringify(received, null, 2) + "```"
         return
-      repstr = "Your new `#{typealias[ntype][0]}` is at: " + \
-        received.repo_url + " ."
-      if received.post_commit_error?
-        repstr += "\nHowever, there were problems after repository creation:\n"
-        repstr += "#{received.post_commit_error}"
-      msg.reply "#{repstr}"
+      msg.reply received.message
     return
 
   create_request_obj = (argdict, template, ntype) ->
