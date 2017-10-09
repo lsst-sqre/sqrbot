@@ -16,6 +16,8 @@ spec:
           image: "lsstsqre/sqrbot"
           
           env:
+            - name: HUBOT_NAME
+              value: "sqrbot"
             - name: HUBOT_SLACK_TOKEN
               valueFrom:
                 secretKeyRef:
