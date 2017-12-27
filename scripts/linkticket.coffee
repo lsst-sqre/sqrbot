@@ -39,6 +39,10 @@ issueResponses = (robot, msg) ->
       return
     urlstr="https://jira.lsstcorp.org/rest/api/latest/issue/#{ticketId}"
     robot.http(urlstr).get() (err, res, body) ->
+      if (not res)
+        msg.send("Null response from GET #{urlstr}")
+        msg.send("Error: #{err}")
+        return
       if res.statusCode in [401, 403]
         msg.send("Protected: <https://jira.lsstcorp.org/browse/#{ticketId}|#{ticketId}>")
         return
