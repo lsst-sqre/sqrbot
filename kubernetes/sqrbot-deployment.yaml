@@ -38,4 +38,4 @@ spec:
                   name: sqrbot-secrets
                   key: github-user
             - name: HUBOT_LOG_LEVEL
-              value: debug
+              value: info
