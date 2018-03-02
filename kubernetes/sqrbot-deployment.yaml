@@ -13,8 +13,7 @@ spec:
 
         - name: sqrbot
           imagePullPolicy: "Always"
-          image: "lsstsqre/sqrbot:0.5.6"
-          
+          image: "lsstsqre/sqrbot:latest"
           env:
             - name: HUBOT_NAME
               value: "sqrbot"
