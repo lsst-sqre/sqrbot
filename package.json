@@ -1,6 +1,6 @@
 {
   "name": "sqrbot",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "private": true,
   "author": "Adam Thornton <athornton@lsst.org>",
   "description": "DM-SQuaRE Automation",
@@ -21,6 +21,7 @@
     "hubot-shipit": "*",
     "hubot-slack": "*",
     "moment": "*",
+    "npm": "^5.7.1",
     "request": "*",
     "ssl-root-cas": "*"
   },
