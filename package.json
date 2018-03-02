@@ -21,6 +21,7 @@
     "hubot-shipit": "*",
     "hubot-slack": "*",
     "moment": "*",
+    "npm": "^5.7.1",
     "request": "*",
     "ssl-root-cas": "*"
   },
