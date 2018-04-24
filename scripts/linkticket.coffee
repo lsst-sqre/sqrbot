@@ -46,7 +46,7 @@ issueResponses = (robot, msg) ->
     last = robot.brain.get(ticketId)
     now = moment()
     robot.brain.set(ticketId, now)
-    if last and now.isBefore last.add(1, 'minute')
+    if last and now.isBefore last.add(5, 'minute')
       return
     urlstr="https://jira.lsstcorp.org/rest/api/latest/issue/#{ticketId}"
     robot.http(urlstr,{ecdhCurve: 'auto'}).get() (err, res, body) ->
