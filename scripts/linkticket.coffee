@@ -5,6 +5,7 @@ moment = require("moment")
 {TextMessage} = require("hubot/src/message")
 
 BOT_NAMES = ["jirabot"]
+TICKET_PREFIXES = "DM|RFC|ITRFC|IHS|PUB"
 
 module.exports = (robot) ->
   rootCas = require('ssl-root-cas/latest').create()
@@ -14,7 +15,17 @@ module.exports = (robot) ->
     # Matcher
     (message) ->
       if message instanceof TextMessage
-        match = message.match(/\b(DM|RFC|ITRFC|IHS|PUB)-\d+/gi)
+        txt = message.text
+        # Remove code blocks (approximately)
+        txt = txt.replace(/```[^`]+```/, "")
+        # Remove URLs and pathnames (approximately)
+        txt = txt.replace(///
+          \/(#{TICKET_PREFIXES})
+          ///gi, "")
+        # Match any ticket identifiers that are left
+        match = txt.match(///
+          \b(#{TICKET_PREFIXES})-\d+
+          ///gi)
         if match and message.user.name not in BOT_NAMES
           match
         else
