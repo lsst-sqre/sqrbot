@@ -18,6 +18,8 @@ module.exports = (robot) ->
         txt = message.text
         # Remove code blocks (approximately)
         txt = txt.replace(/```[^`]+```/, "")
+        # Remove inline code
+        txt = txt.replace(/`[^`]+`/, "")
         # Remove URLs and pathnames (approximately)
         txt = txt.replace(///
           \/(#{TICKET_PREFIXES})
