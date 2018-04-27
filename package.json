@@ -1,11 +1,11 @@
 {
   "name": "sqrbot",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "private": true,
   "author": "Adam Thornton <athornton@lsst.org>",
   "description": "DM-SQuaRE Automation",
   "dependencies": {
-    "coffeescript": "1.x",
+    "coffeescript": "^1.*",
     "hubot": "*",
     "hubot-diagnostics": "*",
     "hubot-giphy": "*",
@@ -21,7 +21,7 @@
     "hubot-shipit": "*",
     "hubot-slack": "*",
     "moment": "*",
-    "npm": "^5.7.1",
+    "npm": "^5.8.0",
     "request": "*",
     "ssl-root-cas": "*"
   },
