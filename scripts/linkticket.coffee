@@ -20,6 +20,8 @@ module.exports = (robot) ->
         txt = txt.replace(/```[^`]+```/, "")
         # Remove inline code
         txt = txt.replace(/`[^`]+`/, "")
+        # Protect "tickets/DM-" (only) when not part of a URL or path
+        txt = txt.replace(/tickets\/DM-/, "DM-")
         # Remove URLs and pathnames (approximately)
         txt = txt.replace(///
           \/(#{TICKET_PREFIXES})
