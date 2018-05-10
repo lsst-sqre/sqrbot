@@ -1,11 +1,12 @@
 # Commands:
 #   `DM-<ticketid>` - Return link to that Jira ticket.
 #   `RFC-<ticketid>` - Return link to *that* RFC.
+#   etc. for other specified ticket types.
 moment = require("moment")
 {TextMessage} = require("hubot/src/message")
 
 BOT_NAMES = ["jirabot"]
-TICKET_PREFIXES = "DM|RFC|ITRFC|IHS|PUB"
+TICKET_PREFIXES = "DM|RFC|ITRFC|IHS|PUB|LIT"
 
 module.exports = (robot) ->
   rootCas = require('ssl-root-cas/latest').create()
