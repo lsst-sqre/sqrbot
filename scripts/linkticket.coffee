@@ -7,6 +7,8 @@ moment = require("moment")
 
 BOT_NAMES = ["jirabot"]
 TICKET_PREFIXES = "DM|RFC|ITRFC|IHS|PUB|LIT"
+user = process.env.LSST_JIRA_USER
+pwd = process.env.LSST_JIRA_PWD
 
 module.exports = (robot) ->
   rootCas = require('ssl-root-cas/latest').create()
@@ -54,7 +56,7 @@ issueResponses = (robot, msg) ->
     if last and now.isBefore last.add(5, 'minute')
       return
     urlstr="https://jira.lsstcorp.org/rest/api/latest/issue/#{ticketId}"
-    robot.http(urlstr,{ecdhCurve: 'auto'}).get() (err, res, body) ->
+    robot.http(urlstr,{ecdhCurve: 'auto'}).auth(user, pwd).get() (err, res, body) ->
       if (not res)
         msg.send("Null response from GET #{urlstr}")
         msg.send("Error: #{err}")
