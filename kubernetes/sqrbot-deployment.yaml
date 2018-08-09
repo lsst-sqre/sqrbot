@@ -37,5 +37,15 @@ spec:
                 secretKeyRef:
                   name: sqrbot-secrets
                   key: github-user
+            - name: LSST_JIRA_USER
+              valueFrom:
+                secretKeyRef:
+                  name: sqrbot-secrets
+                  key: jira-user
+            - name: LSST_JIRA_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: sqrbot-secrets
+                  key: jira-password
             - name: HUBOT_LOG_LEVEL
               value: info

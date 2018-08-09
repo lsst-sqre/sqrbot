@@ -6,7 +6,9 @@ moment = require("moment")
 {TextMessage} = require("hubot/src/message")
 
 BOT_NAMES = ["jirabot"]
-TICKET_PREFIXES = "DM|RFC|ITRFC|IHS|PUB|LIT"
+TICKET_PREFIXES = "DM|RFC|ITRFC|IHS|PUB|LIT|TSEIA"
+user = process.env.LSST_JIRA_USER
+pwd = process.env.LSST_JIRA_PWD
 
 module.exports = (robot) ->
   rootCas = require('ssl-root-cas/latest').create()
@@ -21,6 +23,8 @@ module.exports = (robot) ->
         txt = txt.replace(/```[^`]+```/g, "")
         # Remove inline code
         txt = txt.replace(/`[^`]+`/g, "")
+        # Remove explicit Jira URL
+        txt = txt.replace(/https:\/\/jira\.lsstcorp\.org\/browse\//g, "")
         # Protect "tickets/DM-" (only) when not part of a URL or path
         txt = txt.replace(/tickets\/DM-/g, "DM-")
         # Remove URLs and pathnames (approximately)
@@ -54,7 +58,7 @@ issueResponses = (robot, msg) ->
     if last and now.isBefore last.add(5, 'minute')
       return
     urlstr="https://jira.lsstcorp.org/rest/api/latest/issue/#{ticketId}"
-    robot.http(urlstr,{ecdhCurve: 'auto'}).get() (err, res, body) ->
+    robot.http(urlstr,{ecdhCurve: 'auto'}).auth(user, pwd).get() (err, res, body) ->
       if (not res)
         msg.send("Null response from GET #{urlstr}")
         msg.send("Error: #{err}")
