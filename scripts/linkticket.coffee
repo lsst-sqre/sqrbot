@@ -23,6 +23,8 @@ module.exports = (robot) ->
         txt = txt.replace(/```[^`]+```/g, "")
         # Remove inline code
         txt = txt.replace(/`[^`]+`/g, "")
+        # Remove explicit Jira URL
+        txt = txt.replace(/https:\/\/jira\.lsstcorp\.org\/browse\//g, "")
         # Protect "tickets/DM-" (only) when not part of a URL or path
         txt = txt.replace(/tickets\/DM-/g, "DM-")
         # Remove URLs and pathnames (approximately)
