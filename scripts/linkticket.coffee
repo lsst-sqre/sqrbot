@@ -17,13 +17,13 @@ module.exports = (robot) ->
   robot.listen(
     # Matcher
     (message) ->
-      if message instanceof TextMessage
+      if message instanceof TextMessage and message.user.name not in BOT_NAMES
         txt = message.text
         # Remove code blocks (approximately)
-        txt = txt.replace(/```[^`]+```/g, "")
+        txt = txt.replace(/```.*?```/g, "")
         # Remove inline code
-        txt = txt.replace(/`[^`]+`/g, "")
-        # Remove explicit Jira URL
+        txt = txt.replace(/`.*?`/g, "")
+        # Protect explicit Jira URLs by making them non-URLs
         txt = txt.replace(/https:\/\/jira\.lsstcorp\.org\/browse\//g, "")
         # Protect "tickets/DM-" (only) when not part of a URL or path
         txt = txt.replace(/tickets\/DM-/g, "DM-")
@@ -35,7 +35,7 @@ module.exports = (robot) ->
         match = txt.match(///
           \b(#{TICKET_PREFIXES})-\d+
           ///gi)
-        if match and message.user.name not in BOT_NAMES
+        if match
           match
         else
           false
