@@ -19,6 +19,13 @@ module.exports = (robot) ->
     (message) ->
       if message instanceof TextMessage and message.user.name not in BOT_NAMES
         txt = message.text
+        if message.rawMessage
+          txt = message.rawMessage.text
+          if message.rawMessage.attachments
+            attachment_text = message.rawMessage.attachments.map(
+              (a) -> a.fallback
+            ).join("\n")
+            txt = txt + "\n" + attachment_text if attachment_text.length > 0
         # Remove code blocks (approximately)
         txt = txt.replace(/```.*?```/g, "")
         # Remove inline code
