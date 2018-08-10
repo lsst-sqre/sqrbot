@@ -59,6 +59,11 @@ issueResponses = (robot, msg) ->
       return
     urlstr="https://jira.lsstcorp.org/rest/api/latest/issue/#{ticketId}"
     robot.http(urlstr,{ecdhCurve: 'auto'}).auth(user, pwd).get() (err, res, body) ->
+      # The callback only sees the latest versions of these variables,
+      # so regenerate them from the response
+      urlstr = "https://jira.lsstcorp.org#{res.req.path}"
+      ticketId = res.req.path
+      ticketId = ticketId.replace(/.*\//, "")
       if (not res)
         msg.send("Null response from GET #{urlstr}")
         msg.send("Error: #{err}")
