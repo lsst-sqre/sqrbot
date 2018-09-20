@@ -38,6 +38,7 @@ spec:
                   name: sqrbot-secrets
                   key: github-user
             # If you specify these everything gets screwed up
+            #  if the username/password are incorrect.
             - name: LSST_JIRA_USER
               valueFrom:
                 secretKeyRef:
