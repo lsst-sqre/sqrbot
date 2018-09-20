@@ -17,13 +17,20 @@ module.exports = (robot) ->
   robot.listen(
     # Matcher
     (message) ->
-      if message instanceof TextMessage
+      if message instanceof TextMessage and message.user.name not in BOT_NAMES
         txt = message.text
+        if message.rawMessage
+          txt = message.rawMessage.text
+          if message.rawMessage.attachments
+            attachment_text = message.rawMessage.attachments.map(
+              (a) -> a.fallback
+            ).join("\n")
+            txt = txt + "\n" + attachment_text if attachment_text.length > 0
         # Remove code blocks (approximately)
-        txt = txt.replace(/```[^`]+```/g, "")
+        txt = txt.replace(/```.*?```/g, "")
         # Remove inline code
-        txt = txt.replace(/`[^`]+`/g, "")
-        # Remove explicit Jira URL
+        txt = txt.replace(/`.*?`/g, "")
+        # Protect explicit Jira URLs by making them non-URLs
         txt = txt.replace(/https:\/\/jira\.lsstcorp\.org\/browse\//g, "")
         # Protect "tickets/DM-" (only) when not part of a URL or path
         txt = txt.replace(/tickets\/DM-/g, "DM-")
@@ -35,7 +42,7 @@ module.exports = (robot) ->
         match = txt.match(///
           \b(#{TICKET_PREFIXES})-\d+
           ///gi)
-        if match and message.user.name not in BOT_NAMES
+        if match
           match
         else
           false
@@ -59,6 +66,11 @@ issueResponses = (robot, msg) ->
       return
     urlstr="https://jira.lsstcorp.org/rest/api/latest/issue/#{ticketId}"
     robot.http(urlstr,{ecdhCurve: 'auto'}).auth(user, pwd).get() (err, res, body) ->
+      # The callback only sees the latest versions of these variables,
+      # so regenerate them from the response
+      urlstr = "https://jira.lsstcorp.org#{res.req.path}"
+      ticketId = res.req.path
+      ticketId = ticketId.replace(/.*\//, "")
       if (not res)
         msg.send("Null response from GET #{urlstr}")
         msg.send("Error: #{err}")
