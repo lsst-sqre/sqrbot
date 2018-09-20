@@ -3,13 +3,9 @@ MAINTAINER sqre-admin
 LABEL description="LSST DM-SQuaRE Hubot Automation" \
       name="lsstsqre/sqrbot"
 RUN useradd -d /home/hubot -m hubot
-COPY external-scripts.json package.json README.md /home/hubot/
-COPY bin /home/hubot/bin/
-RUN chown -R hubot /home/hubot
-COPY scripts /home/hubot/scripts/
-RUN chown -R hubot /home/hubot/scripts
 USER hubot
 WORKDIR /home/hubot
+COPY external-scripts.json package.json /home/hubot/
 RUN npm install
 #
 # You will need to set HUBOT_SLACK_TOKEN in order for this to work.
@@ -18,7 +14,12 @@ RUN npm install
 # HUBOT_GITHUB_USER
 # HUBOT_GITHUB_TOKEN
 # HUBOT_GITHUB_PASSWORD
+# LSST_JIRA_USER
+# LSST_JIRA_PWD
 #
-CMD bin/hubot -a slack
-ARG VERSION="0.8.1"
+RUN mkdir scripts
+COPY scripts/ scripts/
+ENV PATH /usr/local/bin:/usr/bin:/bin:/home/hubot/node_modules/.bin
+CMD hubot -a slack
+ARG VERSION="0.9.0"
 LABEL version="$VERSION"
