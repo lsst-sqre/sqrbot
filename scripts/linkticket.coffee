@@ -57,9 +57,10 @@ issueResponses = (robot, msg) ->
   ticketIds = Array.from(new Set(msg.match))
   for ticketId in ticketIds
     ticketId = ticketId.toUpperCase()
-    last = robot.brain.get(ticketId)
+    brainId = ticketId + "#" + msg.message.room
+    last = robot.brain.get(brainId)
     now = moment()
-    robot.brain.set(ticketId, now)
+    robot.brain.set(brainId, now)
     if last and now.isBefore last.add(5, 'minute')
       return
     urlstr="https://jira.lsstcorp.org/rest/api/latest/issue/#{ticketId}"
