@@ -6,7 +6,7 @@ moment = require("moment")
 {TextMessage} = require("hubot/src/message")
 
 BOT_NAMES = ["jirabot"]
-TICKET_PREFIXES = "DM|RFC|ITRFC|IHS|PUB|LIT|TSEIA|TSS"
+TICKET_PREFIXES = "DM|RFC|ITRFC|IHS|PUB|LIT|TSEIA|TSS|CAP"
 user = process.env.LSST_JIRA_USER
 pwd = process.env.LSST_JIRA_PWD
 
