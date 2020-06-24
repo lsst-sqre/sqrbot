@@ -20,37 +20,35 @@ module.exports = (robot) ->
   robot.listen(
     # Matcher
     (message) ->
-      if message instanceof TextMessage and message.user.name not in BOT_NAMES
-        txt = message.text
-        if message.rawMessage
-          txt = message.rawMessage.text
-          if message.rawMessage.attachments
-            attachment_text = message.rawMessage.attachments.map(
-              (a) -> a.fallback
-            ).join("\n")
-            txt = txt + "\n" + attachment_text if attachment_text.length > 0
-        # Remove code blocks (approximately)
-        txt = txt.replace(/```.*?```/g, "")
-        # Remove inline code
-        txt = txt.replace(/`.*?`/g, "")
-        # Protect explicit Jira URLs by making them non-URLs
-        txt = txt.replace(/https:\/\/jira\.lsstcorp\.org\/browse\//g, "")
-        # Protect "tickets/DM-" (only) when not part of a URL or path
-        txt = txt.replace(/tickets\/DM-/g, "DM-")
-        # Remove URLs and pathnames (approximately)
-        txt = txt.replace(///
-          \/(#{TICKET_PREFIXES})
-          ///gi, "")
-        # Match any ticket identifiers that are left
-        match = txt.match(///
-          \b(#{TICKET_PREFIXES})-\d+
-          ///gi)
-        if match
-          match
-        else
-          false
-      else
-        false
+      if not (message instanceof TextMessage)
+        return false
+      if message.user.name in BOT_NAMES
+        return false
+      txt = message.text
+      if message.rawMessage
+        txt = message.rawMessage.text
+        for a in message.rawMessage.attachments or []
+          txt = txt + "\n" + a.fallback
+      # Remove code blocks (approximately)
+      txt = txt.replace(/```.*?```/g, "")
+      # Remove inline code
+      txt = txt.replace(/`.*?`/g, "")
+      # Protect explicit Jira URLs by making them non-URLs
+      txt = txt.replace(/https:\/\/jira\.lsstcorp\.org\/browse\//g, "")
+      # Protect "tickets/DM-" (only) when not part of a URL or path
+      txt = txt.replace(/tickets\/DM-/g, "DM-")
+      # Remove URLs and pathnames (approximately)
+      txt = txt.replace(///
+        \/(#{TICKET_PREFIXES})
+        ///gi, "")
+      # Match any ticket identifiers that are left
+      match = txt.match(///
+        \b(#{TICKET_PREFIXES})-\d+
+        ///gi)
+      if match
+        return match
+      return false
+
     # Callback
     (response) ->
       # Link to the associated tickets
@@ -62,9 +60,10 @@ issueResponses = (robot, msg) ->
   ticketIds = Array.from(new Set(msg.match))
   for ticketId in ticketIds
     ticketId = ticketId.toUpperCase()
-    last = robot.brain.get(ticketId)
+    brainId = ticketId + "#" + msg.message.room
+    last = robot.brain.get(brainId)
     now = moment()
-    robot.brain.set(ticketId, now)
+    robot.brain.set(brainId, now)
     if last and now.isBefore last.add(5, 'minute')
       return
     urlstr="https://jira.lsstcorp.org/rest/api/latest/issue/#{ticketId}"
