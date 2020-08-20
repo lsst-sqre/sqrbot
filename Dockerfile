@@ -21,5 +21,5 @@ RUN mkdir scripts
 COPY scripts/ scripts/
 ENV PATH /usr/local/bin:/usr/bin:/bin:/home/hubot/node_modules/.bin
 CMD hubot -a slack
-ARG VERSION="0.10.2"
+ARG VERSION="0.10.3"
 LABEL version="$VERSION"

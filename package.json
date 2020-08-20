@@ -1,6 +1,6 @@
 {
   "name": "Sqrbot",
-  "version": "0.9.4",
+  "version": "0.10.3",
   "private": true,
   "author": "SQuaRE <sqre-admin@lsst.org>",
   "description": "ChatOps Robot",
