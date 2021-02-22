@@ -36,7 +36,7 @@ module.exports = (robot) ->
       repopulate_cache(robot)
     , interval
   
-  rootCas = require('ssl-root-cas/latest').create()
+  rootCas = require('ssl-root-cas').create()
   require('https').globalAgent.options.ca = rootCas
   robot.respond /project\s+list$/i, (msg) ->
     repstr = "I know about the following project types:\n"

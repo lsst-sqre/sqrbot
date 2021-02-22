@@ -14,7 +14,7 @@ user = process.env.LSST_JIRA_USER
 pwd = process.env.LSST_JIRA_PWD
 
 module.exports = (robot) ->
-  rootCas = require('ssl-root-cas/latest').create()
+  rootCas = require('ssl-root-cas').create()
   require('https').globalAgent.options.ca = rootCas
   ticketId = null
   robot.listen(

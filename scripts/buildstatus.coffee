@@ -1,7 +1,7 @@
 # Commands:
 #   `@sqrbot buildstatus <job>` - Fetch status of CI build job _job_
 module.exports = (robot) ->
-  rootCas = require('ssl-root-cas/latest').create()
+  rootCas = require('ssl-root-cas').create()
   require('https').globalAgent.options.ca = rootCas
   robot.respond /buildstatus (\S+)/i, (msg) ->
     jerb = msg.match[1]
