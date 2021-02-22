@@ -12,7 +12,7 @@ timerid = null # static across messages
 
 
 module.exports = (robot) ->
-  rootCas = require('ssl-root-cas/latest').create()
+  rootCas = require('ssl-root-cas').create()
   require('https').globalAgent.options.ca = rootCas
   robot.respond /ltdstatus$/i, (msg) ->
     getltdstatus(robot,msg,null,false,true)

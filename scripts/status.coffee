@@ -1,7 +1,7 @@
 # Commands:
 #   `@sqrbot status` - Fetch status of various LSST services
 module.exports = (robot) ->
-  rootCas = require('ssl-root-cas/latest').create()
+  rootCas = require('ssl-root-cas').create()
   require('https').globalAgent.options.ca = rootCas
   robot.respond /status/i, (msg) ->
     robot.http("https://api.lsst.codes/status/").get() (err, res, body) ->

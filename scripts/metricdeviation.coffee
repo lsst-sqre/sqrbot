@@ -9,7 +9,7 @@ timerid = null # static across messages
 
 
 module.exports = (robot) ->
-  rootCas = require('ssl-root-cas/latest').create()
+  rootCas = require('ssl-root-cas').create()
   require('https').globalAgent.options.ca = rootCas
   robot.respond /metricdeviation (\S+)\s+(\S+)$/i, (msg) ->
     metric = msg.match[1]
