@@ -32,7 +32,7 @@ module.exports = (robot) ->
         for a in message.rawMessage.attachments or []
           txt = txt + "\n" + a.fallback
       # Remove code blocks (approximately)
-      txt = txt.replace(/```.*?```/g, "")
+      txt = txt.replace(/```.*?```/gm, "")
       # Remove inline code
       txt = txt.replace(/`.*?`/g, "")
       # Protect explicit Jira URLs by making them non-URLs
