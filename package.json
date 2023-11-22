@@ -1,10 +1,11 @@
 {
-  "name": "Sqrbot",
-  "version": "0.10.5",
+  "name": "sqrbot",
+  "version": "0.10.7",
   "private": true,
   "author": "SQuaRE <sqre-admin@lsst.org>",
   "description": "ChatOps Robot",
   "dependencies": {
+    "coffeescript": "^1.11.1",
     "hubot": "^3.3.2",
     "hubot-diagnostics": "^1.0.0",
     "hubot-google-images": "^0.2.7",
@@ -23,5 +24,8 @@
   },
   "engines": {
     "node": "latest"
+  },
+  "scripts": {
+    "start": "hubot --adapter slack"
   }
 }
