@@ -24,5 +24,8 @@
   },
   "engines": {
     "node": "latest"
+  },
+  "scripts": {
+    "start": "hubot --adapter slack"
   }
 }
