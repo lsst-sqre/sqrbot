@@ -23,5 +23,5 @@ RUN mkdir scripts
 COPY scripts/ scripts/
 ENV PATH /usr/local/bin:/usr/bin:/bin:/home/hubot/node_modules/.bin
 CMD ["npm", "run", "start"]
-ARG VERSION="0.10.6"
+ARG VERSION="0.10.7"
 LABEL version="$VERSION"
