@@ -14,6 +14,7 @@ TICKET_PREFIXES = TICKET_PREFIXES + "|SITCOM|BLOCK"
 
 user = process.env.LSST_JIRA_USER
 pwd = process.env.LSST_JIRA_PWD
+url = process.env.LSST_JIRA_URL or "https://jira.lsstcorp.org"
 
 module.exports = (robot) ->
   rootCas = require('ssl-root-cas').create()
@@ -36,7 +37,9 @@ module.exports = (robot) ->
       # Remove inline code
       txt = txt.replace(/`.*?`/g, "")
       # Protect explicit Jira URLs by making them non-URLs
-      txt = txt.replace(/https:\/\/jira\.lsstcorp\.org\/browse\//g, "")
+      txt = txt.replace(///
+        (#{url}/\browse\/)
+        ///g, "")
       # Protect "tickets/DM-" (only) when not part of a URL or path
       txt = txt.replace(/tickets\/DM-/g, "DM-")
       # Remove URLs and pathnames (approximately)
@@ -68,11 +71,11 @@ issueResponses = (robot, msg) ->
     robot.brain.set(brainId, now)
     if last and now.isBefore last.add(5, 'minute')
       return
-    urlstr="https://jira.lsstcorp.org/rest/api/latest/issue/#{ticketId}"
+    urlstr="#{url}/rest/api/latest/issue/#{ticketId}"
     robot.http(urlstr,{ecdhCurve: 'auto'}).auth(user, pwd).get() (err, res, body) ->
       # The callback only sees the latest versions of these variables,
       # so regenerate them from the response
-      urlstr = "https://jira.lsstcorp.org#{res.req.path}"
+      urlstr = url + "#{url}#{res.req.path}"
       ticketId = res.req.path
       ticketId = ticketId.replace(/.*\//, "")
       if (not res)
@@ -80,7 +83,7 @@ issueResponses = (robot, msg) ->
         msg.send("Error: #{err}")
         return
       if res.statusCode in [401, 403]
-        msg.send("Protected: <https://jira.lsstcorp.org/browse/#{ticketId}|#{ticketId}>")
+        msg.send("Protected: <#{url}"/browse/#{ticketId}|#{ticketId}>")
         return
       if res.statusCode == 404
         # Do Nothing
@@ -102,7 +105,7 @@ getAttachment = (issue) ->
   response.color = "#88bbdd"
   response.mrkdwn_in = [ 'text' ]
   # Parse text as markdown
-  issue_md = "<https://jira.lsstcorp.org/browse/#{issue.key}|#{issue.key}>"
+  issue_md = "<#{url}/browse/#{issue.key}|#{issue.key}>"
   status_md = "`#{issue.fields.status.name}`"
   response.text = issue_md + ": " + status_md + " " + issue.fields.summary
   response.footer = 'Unassigned'
