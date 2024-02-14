@@ -7,9 +7,8 @@ deployed on [Heroku][heroku] to get you up and running as quick as possible.
 ## IMPORTANT NOTE
 
 You need Coffeescript 1.x to run Hubot, but its dependencies don't
-specify that, so package-lock.json needs editing if you rebuild, to
-force cofeescript to 1.x at the top level and for hubot and
-hubot-diagnostics functionality.
+specify that.  Use the included, frozen, package-lock.json, and update
+the top-level versions there and in package.json by hand.
 
 This README is intended to help get you started. Definitely update and improve
 to talk about your own instance, how to use and deploy, what functionality is
