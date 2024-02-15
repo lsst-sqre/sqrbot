@@ -83,7 +83,7 @@ issueResponses = (robot, msg) ->
         msg.send("Error: #{err}")
         return
       if res.statusCode in [401, 403]
-        msg.send("Protected: <#{url}"/browse/#{ticketId}|#{ticketId}>")
+        msg.send("Protected: <#{url}/browse/#{ticketId}|#{ticketId}>")
         return
       if res.statusCode == 404
         # Do Nothing
