@@ -38,7 +38,7 @@ module.exports = (robot) ->
       txt = txt.replace(/`.*?`/g, "")
       # Protect explicit Jira URLs by making them non-URLs
       txt = txt.replace(///
-        (#{url}/\browse\/)
+        (#{url})\/browse\/
         ///g, "")
       # Protect "tickets/DM-" (only) when not part of a URL or path
       txt = txt.replace(/tickets\/DM-/g, "DM-")
@@ -75,7 +75,7 @@ issueResponses = (robot, msg) ->
     robot.http(urlstr,{ecdhCurve: 'auto'}).auth(user, pwd).get() (err, res, body) ->
       # The callback only sees the latest versions of these variables,
       # so regenerate them from the response
-      urlstr = url + "#{url}#{res.req.path}"
+      urlstr = "#{url}#{res.req.path}"
       ticketId = res.req.path
       ticketId = ticketId.replace(/.*\//, "")
       if (not res)
